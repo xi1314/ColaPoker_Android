@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color_gray">#b5c5d7</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_tangerine">#ED716A</color>
+    <color name="text_color">#5a5a5a</color>
+    <color name="log_bt_color">#4bb3ff</color>
+
+
+
+</resources>

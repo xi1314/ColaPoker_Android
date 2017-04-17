@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.poker.colapanda.zhenrendantiao.login.RegisterActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/register_background" />
+        <ImageView
+            android:id="@+id/register_iv_people"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="60dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/register_background_people"/>
+
+        <EditText
+            android:layout_below="@+id/register_iv_people"
+            android:id="@+id/register_et_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/register_account_rim"
+            android:hint="账号"
+            android:inputType="phone|number"
+            android:maxLength="11"
+            android:numeric="integer"
+            android:paddingTop="5dp"
+            android:paddingLeft="15dp"
+            android:singleLine="true"
+            android:textColorHint="@color/color_gray"
+            android:textSize="12dp" />
+
+        <LinearLayout
+            android:id="@+id/register_ll_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/register_et_account"
+            android:layout_alignRight="@+id/register_et_account"
+            android:layout_below="@+id/register_et_account"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/register_et_code"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+
+                android:background="@drawable/register_code_rim"
+                android:hint="验证码"
+                android:inputType="phone|number"
+                android:maxLength="6"
+                android:numeric="integer"
+                android:paddingLeft="15dp"
+                android:singleLine="true"
+                android:textColorHint="@color/color_gray"
+                android:textSize="12dp" />
+
+            <Button
+                android:id="@+id/register_bt_send_code"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/register_send"
+                android:text="立即发送"
+                android:singleLine="true"
+                android:paddingRight="8dp"
+                android:textColor="@color/log_bt_color"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/register_et_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_ll_code"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/register_password_rim"
+            android:hint="密码"
+            android:paddingLeft="15dp"
+            android:paddingBottom="6dp"
+            android:maxLength="16"
+            android:password="true"
+            android:textColorHint="@color/color_gray"
+            android:textSize="12dp" />
+
+        <Button
+            android:id="@+id/register_bt_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/register_et_password"
+            android:layout_below="@+id/register_et_password"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/register_ok_select" />
+
+        <Button
+            android:id="@+id/register_bt_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/register_et_password"
+            android:layout_below="@+id/register_et_password"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/register_cancel_select" />
+
+    </RelativeLayout>
+</LinearLayout>

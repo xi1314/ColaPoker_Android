@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.poker.colapanda.zhenrendantiao.login.LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_background" />
+        <ImageView
+            android:id="@+id/login_iv_people"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logo_background_people"/>
+
+
+        <EditText
+            android:layout_below="@+id/login_iv_people"
+            android:id="@+id/login_et_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/logo_login_account_rim"
+            android:hint="账号"
+            android:inputType="phone|number"
+            android:maxLength="11"
+            android:numeric="integer"
+            android:paddingTop="5dp"
+            android:paddingLeft="15dp"
+            android:singleLine="true"
+            android:textColorHint="@color/color_gray"
+            android:textSize="12dp" />
+
+
+        <EditText
+            android:id="@+id/login_et_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/login_et_account"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/logo_login_password_rim"
+            android:hint="密码"
+            android:paddingBottom="6dp"
+            android:paddingLeft="15dp"
+            android:password="true"
+            android:textColorHint="@color/color_gray"
+            android:textSize="12dp" />
+
+        <Button
+            android:id="@+id/login_iv_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/login_et_password"
+            android:layout_below="@+id/login_et_password"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/login_login_select" />
+
+        <Button
+            android:id="@+id/login_iv_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/login_et_password"
+            android:layout_below="@+id/login_et_password"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/login_register_select" />
+        <TextView
+            android:id="@+id/login_retrieve_pass_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/login_iv_login"
+            android:text="忘记密码"
+            android:paddingRight="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="12dp"
+            android:layout_below="@+id/login_iv_login"
+            android:textColor="@color/color_white"/>
+        <TextView
+            android:id="@+id/login_surrogate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/login_iv_register"
+            android:paddingLeft="10dp"
+            android:text="代理登录"
+            android:layout_marginTop="10dp"
+            android:textSize="12dp"
+            android:layout_below="@+id/login_iv_login"
+            android:textColor="@color/color_white"/>
+
+
+    </RelativeLayout>
+
+</LinearLayout>
