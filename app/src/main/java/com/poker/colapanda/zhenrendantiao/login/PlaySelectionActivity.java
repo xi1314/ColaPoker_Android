@@ -2,16 +2,19 @@ package com.poker.colapanda.zhenrendantiao.login;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.poker.colapanda.zhenrendantiao.R;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.live.ColorRoomActivity;
 import com.poker.colapanda.zhenrendantiao.live.SpecificPointRoomActivity;
+import com.poker.colapanda.zhenrendantiao.login.model.Home;
 import com.poker.colapanda.zhenrendantiao.login.model.Open;
-import com.poker.colapanda.zhenrendantiao.login.model.Play;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
+import com.poker.colapanda.zhenrendantiao.utils.ExitUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -19,7 +22,8 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
     private Button playSelectionColor;
     private Button playSelectionSpecific;
     private Button playSelectionRetreat;
-
+    public static String token;
+    private long backtime = 0;
     private ClickMusic clickMusic = new ClickMusic();
 
     @Override
@@ -46,7 +50,7 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        String token = getIntent().getStringExtra("token");
+        token = getIntent().getStringExtra("token");
         clickMusic.start(this);
         switch (view.getId()){
             case R.id.play_selection_retreat:
@@ -54,13 +58,11 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.play_selection_color:
                 CommonUtils.jumps(PlaySelectionActivity.this, ColorRoomActivity.class, token);
-                EventBus.getDefault().post(new Play());
-                finish();
+                EventBus.getDefault().post(new Home());
                 break;
             case R.id.play_selection_specific:
                 CommonUtils.jumps(PlaySelectionActivity.this, SpecificPointRoomActivity.class, token);
-                EventBus.getDefault().post(new Play());
-                finish();
+                EventBus.getDefault().post(new Home());
                 break;
         }
     }
@@ -76,5 +78,28 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
         super.onDestroy();
         clickMusic.stop();
         CommonUtils.removeActivity(this);
+    }
+    /**
+     * 重写back 点击两次退出APP
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            clickMusic.start(this);
+            long t = System.currentTimeMillis();
+            if (t - backtime > 3000) {
+                Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
+                backtime = t;
+                return true;
+            }
+            ExitUtils.getInstance().exit(PlaySelectionActivity.this);
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 }

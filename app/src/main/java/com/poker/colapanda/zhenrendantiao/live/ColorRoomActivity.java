@@ -43,7 +43,6 @@ import com.poker.colapanda.zhenrendantiao.live.model.Game;
 import com.poker.colapanda.zhenrendantiao.live.model.History;
 import com.poker.colapanda.zhenrendantiao.live.model.User;
 import com.poker.colapanda.zhenrendantiao.live.model.UserBet;
-import com.poker.colapanda.zhenrendantiao.login.LoginActivity;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.poker.colapanda.zhenrendantiao.utils.ExitUtils;
 import com.poker.colapanda.zhenrendantiao.utils.SPUtils;
@@ -556,7 +555,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 clickMusic.start(ColorRoomActivity.this);
                 dialog.dismiss();
-                CommonUtils.jump(ColorRoomActivity.this, LoginActivity.class);
+//                CommonUtils.jump(ColorRoomActivity.this, LoginActivity.class);
                 finish();
             }
         });

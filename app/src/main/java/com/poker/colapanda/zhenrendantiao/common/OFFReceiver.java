@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.poker.colapanda.zhenrendantiao.login.model.Screen;
+import com.poker.colapanda.zhenrendantiao.login.model.Home;
 
 import de.greenrobot.event.EventBus;
 
@@ -18,7 +18,7 @@ public class OFFReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_SCREEN_OFF.equals(action)){
-            EventBus.getDefault().post(new Screen());
+            EventBus.getDefault().post(new Home());
         }
     }
 }

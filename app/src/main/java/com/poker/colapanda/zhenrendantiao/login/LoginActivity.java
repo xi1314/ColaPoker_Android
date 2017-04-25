@@ -23,8 +23,6 @@ import com.poker.colapanda.zhenrendantiao.common.network.ResultError;
 import com.poker.colapanda.zhenrendantiao.common.widget.BaseActivity;
 import com.poker.colapanda.zhenrendantiao.login.model.Home;
 import com.poker.colapanda.zhenrendantiao.login.model.Open;
-import com.poker.colapanda.zhenrendantiao.login.model.Play;
-import com.poker.colapanda.zhenrendantiao.login.model.Screen;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.poker.colapanda.zhenrendantiao.utils.SPUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -254,16 +252,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         open = false;
     }
 
-    public void onEventMainThread(Screen event) {
-        stopService(Serviceintent);
-        open = false;
-    }
 
     public void onEventMainThread(Open event) {
         startService(Serviceintent);
-    }
-    public void onEventMainThread(Play event) {
-        finish();
     }
 
     /**
