@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 import com.poker.colapanda.zhenrendantiao.R;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 
 /**
  * 押注音乐
@@ -14,6 +15,7 @@ public class BetMusic {
     private boolean ss;
 
     public void start(Context context) {
+        if (ZhenrendantiaoApplication.mute){
         if (!ss) {
             mediaPlayer = MediaPlayer.create(context, R.raw.bet);
             ss = true;
@@ -22,6 +24,7 @@ public class BetMusic {
             mediaPlayer.seekTo(0);
             mediaPlayer.start();
         }
+    }
     }
 
     public void stop() {

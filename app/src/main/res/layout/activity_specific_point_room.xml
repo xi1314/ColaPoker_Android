@@ -38,6 +38,14 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="主播正在赶来的路上" />
+                <TextView
+                    android:id="@+id/specific_room_live_time_tv"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/specific_room_live_not_tv"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
 
             </RelativeLayout>
 
@@ -102,6 +110,7 @@
                 android:divider="@null"
                 android:stretchMode="none"
                 android:scrollbars="none"
+                android:visibility="gone"
                 android:layout_marginTop="23dp"/>
 
 
@@ -119,6 +128,15 @@
                 android:clickable="true"
                 android:visibility="gone"
                 android:src="@drawable/room_voice_select" />
+            <ImageView
+                android:id="@+id/specific_room_iv_mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/specific_room_title_rl"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:src="@drawable/open_mute" />
 
             <ImageView
                 android:id="@+id/specific_room_withdraw"
@@ -265,40 +283,204 @@
             android:layout_height="0dp"
             android:layout_margin="3dp"
             android:layout_weight="10">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="match_parent">
-            <Button
-                android:id="@+id/specific_room_big"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="大"/>
-        </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_height="match_parent">
-                <Button
-                    android:id="@+id/specific_room_and"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="和"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:layout_height="match_parent">
-                <Button
-                    android:id="@+id/specific_room_small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="小"/>
-            </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/specific_room_betting_card_one"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/room_specific_big_select"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_tv_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="11dp"
+                        android:background="@drawable/user_bet"
+                        android:gravity="center"
+                        android:paddingBottom="1dp"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="11dp"
+                        android:singleLine="true"
+                        android:text="0"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_count_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/specific_room_betting_card_tv_one"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="2dp"
+                        android:text="0次"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/specific_room_betting_card_two"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/room_specific_little_select"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_tv_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="11dp"
+                        android:background="@drawable/user_bet"
+                        android:gravity="center"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="11dp"
+                        android:layout_centerVertical="true"
+                        android:singleLine="true"
+                        android:text="0"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_count_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/specific_room_betting_card_tv_two"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="2dp"
+                        android:text="0次"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/specific_room_betting_card_three"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/room_specific_tie_select"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_tv_three"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="11dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/user_bet"
+                        android:gravity="center"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="11dp"
+                        android:singleLine="true"
+                        android:text="0"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_count_three"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/specific_room_betting_card_tv_three"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="2dp"
+                        android:text="0次"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/specific_room_betting_card_four"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/room_specific_odd_select"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_tv_four"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="11dp"
+                        android:background="@drawable/user_bet"
+                        android:gravity="center"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="11dp"
+                        android:singleLine="true"
+                        android:text="0"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_count_four"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/specific_room_betting_card_tv_four"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="2dp"
+                        android:text="0次"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/specific_room_betting_card_five"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/room_specific_pair_select"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_tv_five"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="11dp"
+                        android:background="@drawable/user_bet"
+                        android:gravity="center"
+                        android:paddingBottom="1dp"
+                        android:paddingLeft="11dp"
+                        android:singleLine="true"
+                        android:text="0"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/specific_room_betting_card_count_five"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/specific_room_betting_card_tv_five"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="2dp"
+                        android:text="0次"
+                        android:textColor="@color/text_color"
+                        android:textSize="10dp" />
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

@@ -38,6 +38,13 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="主播正在赶来的路上" />
+                <TextView
+                    android:id="@+id/color_room_live_time_tv"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/color_room_live_not_tv"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
 
             </RelativeLayout>
 
@@ -119,6 +126,15 @@
                 android:clickable="true"
                 android:visibility="gone"
                 android:src="@drawable/room_voice_select" />
+            <ImageView
+                android:id="@+id/color_room_iv_mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/color_room_title_rl"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:src="@drawable/open_mute" />
 
             <ImageView
                 android:id="@+id/color_room_withdraw"

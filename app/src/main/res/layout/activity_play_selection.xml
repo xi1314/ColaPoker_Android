@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-
+    android:background="@drawable/play_background"
     tools:context="com.poker.colapanda.zhenrendantiao.login.PlaySelectionActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/play_selection_retreat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/room_play_retreat_select"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp"/>
+
+    <ImageView
+        android:id="@+id/play_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/play_background_person" />
+
     <Button
         android:id="@+id/play_selection_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/register_ok"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_height="match_parent">
+        android:layout_alignBottom="@+id/play_iv"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/play_iv"
+        android:background="@drawable/room_play_color_select" />
+
     <Button
         android:id="@+id/play_selection_specific"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/register_cancel_select"/>
-        </LinearLayout>
+        android:layout_marginLeft="10dp"
+        android:layout_alignBottom="@+id/play_iv"
+        android:layout_toRightOf="@+id/play_iv"
+        android:background="@drawable/room_play_selection_select" />
 
-</LinearLayout>
+</RelativeLayout>

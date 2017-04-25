@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 import com.poker.colapanda.zhenrendantiao.R;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 
 /**
  * 点击音乐
@@ -13,6 +14,7 @@ public class WithdrawMusic {
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private boolean ss;
     public void start (Context context) {
+        if (ZhenrendantiaoApplication.mute){
         if (!ss) {
             mediaPlayer = MediaPlayer.create(context, R.raw.withdraw);
             ss = true;
@@ -21,7 +23,7 @@ public class WithdrawMusic {
             mediaPlayer.seekTo(0);
             mediaPlayer.start();
         }
-    }
+    }}
     public void stop(){
         ss = false;
         if (mediaPlayer.isPlaying()) {

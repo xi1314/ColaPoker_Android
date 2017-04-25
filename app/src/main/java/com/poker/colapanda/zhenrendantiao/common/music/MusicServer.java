@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 
 import com.poker.colapanda.zhenrendantiao.R;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 
 /**
  * 播放背景音乐
@@ -34,7 +35,9 @@ public class MusicServer extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        mediaPlayer.start();
+        if (ZhenrendantiaoApplication.mute) {
+            mediaPlayer.start();
+        }
     }
 
 

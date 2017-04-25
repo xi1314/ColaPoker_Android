@@ -7,6 +7,7 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.poker.colapanda.zhenrendantiao.utils.SPUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.litepal.LitePalApplication;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ZhenrendantiaoApplication extends LitePalApplication {
     public static Context appContext;
+    public static boolean mute = true ;
     //连接超时
     public final static int CONNECTTIMEOUT = 10;
     public final static int READTIMEOUT = 20;
@@ -54,6 +56,11 @@ public class ZhenrendantiaoApplication extends LitePalApplication {
                 .writeDebugLogs() // Remove for release app
                 .build();
         ImageLoader.getInstance().init(config);
+        if (!(boolean) SPUtils.get(this,"mute",false)){
+           mute = true;
+        }else {
+            mute = false;
+        }
 
     }
 }

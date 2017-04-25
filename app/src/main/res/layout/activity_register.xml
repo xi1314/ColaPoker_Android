@@ -19,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="60dp"
+            android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
             android:src="@drawable/register_background_people"/>
 
@@ -84,12 +85,26 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/register_ll_code"
             android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
             android:background="@drawable/register_password_rim"
             android:hint="密码"
             android:paddingLeft="15dp"
-            android:paddingBottom="6dp"
             android:maxLength="16"
             android:password="true"
+            android:textColorHint="@color/color_gray"
+            android:textSize="12dp" />
+        <EditText
+            android:id="@+id/register_et_agency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/register_et_password"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:background="@drawable/register_agency"
+            android:hint="代理（选填）"
+            android:paddingLeft="15dp"
+            android:maxLength="16"
+            android:inputType="phone|number"
             android:textColorHint="@color/color_gray"
             android:textSize="12dp" />
 
@@ -97,20 +112,19 @@
             android:id="@+id/register_bt_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/register_et_password"
-            android:layout_below="@+id/register_et_password"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="5dp"
+            android:layout_alignLeft="@+id/register_et_agency"
+            android:layout_below="@+id/register_et_agency"
+
+            android:layout_marginTop="10dp"
             android:background="@drawable/register_ok_select" />
 
         <Button
             android:id="@+id/register_bt_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/register_et_password"
-            android:layout_below="@+id/register_et_password"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="5dp"
+            android:layout_alignRight="@+id/register_et_agency"
+            android:layout_below="@+id/register_et_agency"
+            android:layout_marginTop="10dp"
             android:background="@drawable/register_cancel_select" />
 
     </RelativeLayout>

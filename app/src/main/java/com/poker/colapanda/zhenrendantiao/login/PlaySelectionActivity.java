@@ -18,6 +18,8 @@ import de.greenrobot.event.EventBus;
 public class PlaySelectionActivity extends Activity implements View.OnClickListener{
     private Button playSelectionColor;
     private Button playSelectionSpecific;
+    private Button playSelectionRetreat;
+
     private ClickMusic clickMusic = new ClickMusic();
 
     @Override
@@ -32,11 +34,13 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
     private void setListener() {
         playSelectionColor.setOnClickListener(this);
         playSelectionSpecific.setOnClickListener(this);
+        playSelectionRetreat.setOnClickListener(this);
     }
 
     private void initView() {
         playSelectionColor = (Button) findViewById(R.id.play_selection_color);
         playSelectionSpecific = (Button) findViewById(R.id.play_selection_specific);
+        playSelectionRetreat = (Button) findViewById(R.id.play_selection_retreat);
 
     }
 
@@ -45,6 +49,9 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
         String token = getIntent().getStringExtra("token");
         clickMusic.start(this);
         switch (view.getId()){
+            case R.id.play_selection_retreat:
+                finish();
+                break;
             case R.id.play_selection_color:
                 CommonUtils.jumps(PlaySelectionActivity.this, ColorRoomActivity.class, token);
                 EventBus.getDefault().post(new Play());

@@ -15,6 +15,15 @@ public class Game {
     private String withdraws_url;   //提现
     private String live_url_md5;    //语音频道号
     private String wechat;          //客服
+    private String live_time;       //直播时间
+
+    public String getLive_time() {
+        return live_time;
+    }
+
+    public void setLive_time(String live_time) {
+        this.live_time = live_time;
+    }
 
     public String getWechat() {
         return wechat;

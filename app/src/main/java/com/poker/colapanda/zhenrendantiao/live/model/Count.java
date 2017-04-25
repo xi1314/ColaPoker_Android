@@ -9,6 +9,51 @@ public class Count {
     private int clubs;   //梅花数
     private int diamonds; //方片数
     private int jokers;  //王数
+    private int big;  //大
+    private int small;  //小
+    private int single;  //单
+    private int pair;  //双
+    private int peace;  //和
+
+    public int getBig() {
+        return big;
+    }
+
+    public void setBig(int big) {
+        this.big = big;
+    }
+
+    public int getSmall() {
+        return small;
+    }
+
+    public void setSmall(int small) {
+        this.small = small;
+    }
+
+    public int getSingle() {
+        return single;
+    }
+
+    public void setSingle(int single) {
+        this.single = single;
+    }
+
+    public int getPair() {
+        return pair;
+    }
+
+    public void setPair(int pair) {
+        this.pair = pair;
+    }
+
+    public int getPeace() {
+        return peace;
+    }
+
+    public void setPeace(int peace) {
+        this.peace = peace;
+    }
 
     public int getSpades() {
         return spades;

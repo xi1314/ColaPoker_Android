@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +22,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.poker.colapanda.zhenrendantiao.R;
 import com.poker.colapanda.zhenrendantiao.common.Constants;
+import com.poker.colapanda.zhenrendantiao.common.MyCount;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 import com.poker.colapanda.zhenrendantiao.common.music.BetMusic;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.common.music.CountdownMusic;
@@ -43,6 +46,7 @@ import com.poker.colapanda.zhenrendantiao.live.model.UserBet;
 import com.poker.colapanda.zhenrendantiao.login.LoginActivity;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.poker.colapanda.zhenrendantiao.utils.ExitUtils;
+import com.poker.colapanda.zhenrendantiao.utils.SPUtils;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayer;
@@ -61,12 +65,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * 猜大小游戏直播间
+ * 猜颜色游戏直播间
  * Created by zhangze on 2017/3/10 14:35
  */
 public class SpecificPointRoomActivity extends BaseActivity implements View.OnClickListener {
-    private TXCloudVideoView specificRPlayerView;//播放窗口
-    private TXLivePlayer specificRLivePlayer;//播放窗口
+    private TXCloudVideoView specificPlayerView;//播放窗口
+    private TXLivePlayer specificLivePlayer;//播放窗口
     private long backtime = 0;
     private ClickMusic clickMusic = new ClickMusic();
     private OpenMusic openMusic = new OpenMusic();
@@ -84,18 +88,35 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private TextView specificRoomTotalBettingThree;//总倍数
     private TextView specificRoomTotalBettingFour;//总倍数
     private TextView specificRoomTotalBettingFive;//总倍数
+    private TextView specificRoomBettingCardTvOne;//压倍数
+    private TextView specificRoomBettingCardTvTwo;//压倍数
+    private TextView specificRoomBettingCardTvThree;//压倍数
+    private TextView specificRoomBettingCardTvFour;//压倍数
+    private TextView specificRoomBettingCardTvFive;//压倍数
     private TextView specificRoomTvBalance;//余额
     private TextView specificRoomTitle1;
     private TextView specificRoomTitleStatus;
     private TextView specificRoomtitleCountdown;
     private TextView specificRoomLiveNotTv;//未开播提示语
+    private TextView specificRoomBettingCardCountOne;//大出现次数
+    private TextView specificRoomBettingCardCountTwo;//小出现次数
+    private TextView specificRoomBettingCardCountThree;//和出现次数
+    private TextView specificRoomBettingCardCountFour;//单出现次数
+    private TextView specificRoomBettingCardCountFive;//双出现次数
+    private RelativeLayout specificRoomBettingCardOne;//大桃投注
+    private RelativeLayout specificRoomBettingCardTwo;//小投注
+    private RelativeLayout specificRoomBettingCardThree;//和投注
+    private RelativeLayout specificRoomBettingCardFour;//单投注
+    private RelativeLayout specificRoomBettingCardFive;//双投注
     private RelativeLayout specificRoomLiveNotBackground;//未开播背景
     private ImageView specificRoomOpen;//开牌
     private ImageView specificRoomIvVoice;//语音
+    private ImageView specificRoomIvMute;//静音
     private ImageView specificRoomIvChip;//筹码
     private ImageView specificRoomWithdraw;//撤销
     private GridView specificRoomMgvHistory;//小历史
     private TextView specificRoomTitleWechat;
+    private TextView specificRoomLiveTimeTv;//开播时间
 
     private Button specificRoomBtCharge;//充值
     private Button specificRoomBtMention;//提现
@@ -110,6 +131,8 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private boolean mCard;//是否押注
     private boolean mclick;
     private boolean countdown;
+    private boolean bet;
+    private boolean flicker;//闪烁不闪烁
 
 
     private HistoryAdapter historyAdapter;
@@ -159,12 +182,17 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 //                }
 //            });
 //        }
-//
-//        public void onAudioRouteChanged(int routing) {
+
+    //        public void onAudioRouteChanged(int routing) {
 //            int i = routing;
 //        }
 //    };
-//    private AudioManager audio;
+    private MyCount myCount;
+
+    private int[] bigs = {8, 9, 10, 11, 12, 13};
+    private int[] smalls = {1, 2, 3, 4, 5, 6};
+    private int[] singles = {1, 3, 5, 7, 9, 11, 13};
+    private int[] pairs = {2, 4, 6, 8, 10, 12};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,16 +201,21 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         CommonUtils.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//屏幕常亮
         initView();
+            if (!(boolean)SPUtils.get(ZhenrendantiaoApplication.appContext,"mute",false)){
+                specificRoomIvMute.setImageResource(R.drawable.open_mute);
+            }else {
+                specificRoomIvMute.setImageResource(R.drawable.off_mute);
+        }
         token = getIntent().getStringExtra("token");
         getGameData();
-        specificRLivePlayer = new TXLivePlayer(this);
-        specificRLivePlayer.setPlayerView(specificRPlayerView);
+        specificLivePlayer = new TXLivePlayer(this);
+        specificLivePlayer.setPlayerView(specificPlayerView);
         handler.postDelayed(runnable, DELYED);
         setOnClickListener();
 //        mRtcEngine = RtcEngine.create(this, Constants.Comm.VOICE_KEY, mRtcEventHandler);
 //        mRtcEngine.setEnableSpeakerphone(true);
         hideBottomUIMenu();
-        specificRLivePlayer.setPlayListener(new ITXLivePlayListener() {
+        specificLivePlayer.setPlayListener(new ITXLivePlayListener() {
             @Override
             public void onPlayEvent(int i, Bundle bundle) {
                 if (i == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
@@ -195,6 +228,11 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                 }
                 if (i == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
                     specificRoomLiveNotBackground.setVisibility(View.GONE);
+                    if (ZhenrendantiaoApplication.mute) {
+                        specificLivePlayer.setMute(false);
+                    }else {
+                        specificLivePlayer.setMute(true);
+                    }
                 }
 
             }
@@ -204,63 +242,110 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
             }
         });
-//        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-//        audio = (AudioManager) getSystemService(Service.AUDIO_SERVICE);
+
     }
 
     private void setOnClickListener() {
+        specificRoomBettingCardOne.setOnClickListener(this);
+        specificRoomBettingCardTwo.setOnClickListener(this);
+        specificRoomBettingCardThree.setOnClickListener(this);
+        specificRoomBettingCardFour.setOnClickListener(this);
+        specificRoomBettingCardFive.setOnClickListener(this);
         specificRoomBtCharge.setOnClickListener(this);
         specificRoomBtMention.setOnClickListener(this);
         specificRoomBtRetreat.setOnClickListener(this);
-//        specificRoomIvVoice.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                int action = motionEvent.getAction();
-//                if (action == motionEvent.ACTION_DOWN) {
+        specificRoomIvVoice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                if (action == motionEvent.ACTION_DOWN) {
 //                    mRtcEngine.muteLocalAudioStream(false);
-//                } else if (action == motionEvent.ACTION_UP) {
+                } else if (action == motionEvent.ACTION_UP) {
 //                    mRtcEngine.muteLocalAudioStream(true);
-//                }
-//                return false;
-//            }
-//        });
+                }
+                return false;
+            }
+        });
         specificRoomIvChip.setOnClickListener(this);
         specificRoomWithdraw.setOnClickListener(this);
+        specificRoomIvMute.setOnClickListener(this);
 
     }
 
     private void initView() {
-        specificRPlayerView = (TXCloudVideoView) findViewById(R.id.specific_room_video_view);
+        specificPlayerView = (TXCloudVideoView) findViewById(R.id.specific_room_video_view);
+
         specificRoomTotalBettingOne = (TextView) findViewById(R.id.specific_room_total_betting_one);
         specificRoomTotalBettingTwo = (TextView) findViewById(R.id.specific_room_total_betting_two);
         specificRoomTotalBettingThree = (TextView) findViewById(R.id.specific_room_total_betting_three);
         specificRoomTotalBettingFour = (TextView) findViewById(R.id.specific_room_total_betting_four);
         specificRoomTotalBettingFive = (TextView) findViewById(R.id.specific_room_total_betting_five);
+
+        specificRoomBettingCardOne = (RelativeLayout) findViewById(R.id.specific_room_betting_card_one);
+        specificRoomBettingCardTwo = (RelativeLayout) findViewById(R.id.specific_room_betting_card_two);
+        specificRoomBettingCardThree = (RelativeLayout) findViewById(R.id.specific_room_betting_card_three);
+        specificRoomBettingCardFour = (RelativeLayout) findViewById(R.id.specific_room_betting_card_four);
+        specificRoomBettingCardFive = (RelativeLayout) findViewById(R.id.specific_room_betting_card_five);
+
+        specificRoomBettingCardTvOne = (TextView) findViewById(R.id.specific_room_betting_card_tv_one);
+        specificRoomBettingCardTvTwo = (TextView) findViewById(R.id.specific_room_betting_card_tv_two);
+        specificRoomBettingCardTvThree = (TextView) findViewById(R.id.specific_room_betting_card_tv_three);
+        specificRoomBettingCardTvFour = (TextView) findViewById(R.id.specific_room_betting_card_tv_four);
+        specificRoomBettingCardTvFive = (TextView) findViewById(R.id.specific_room_betting_card_tv_five);
+
         specificRoomBtCharge = (Button) findViewById(R.id.specific_room_bt_charge);
         specificRoomBtMention = (Button) findViewById(R.id.specific_room_bt_mention);
         specificRoomBtRetreat = (Button) findViewById(R.id.specific_room_bt_retreat);
+
         specificRoomTvBalance = (TextView) findViewById(R.id.specific_room_tv_balance);
+
         specificRoomTitle1 = (TextView) findViewById(R.id.specific_room_title1);
         specificRoomTitleStatus = (TextView) findViewById(R.id.specific_room_title_status);
         specificRoomtitleCountdown = (TextView) findViewById(R.id.specific_room_title_countdown);
+
         specificRoomOpen = (ImageView) findViewById(R.id.specific_room_open);
+
         specificRoomGvHistory = (GridView) findViewById(R.id.specific_room_gv_history);
+
         specificRoomIvVoice = (ImageView) findViewById(R.id.specific_room_iv_voice);
+
         specificRoomIvChip = (ImageView) findViewById(R.id.specific_room_iv_chip);
+
         specificRoomLiveNotBackground = (RelativeLayout) findViewById(R.id.specific_room_live_not_background);
         specificRoomLiveNotTv = (TextView) findViewById(R.id.specific_room_live_not_tv);
+
+        specificRoomBettingCardCountOne = (TextView) findViewById(R.id.specific_room_betting_card_count_one);
+        specificRoomBettingCardCountTwo = (TextView) findViewById(R.id.specific_room_betting_card_count_two);
+        specificRoomBettingCardCountThree = (TextView) findViewById(R.id.specific_room_betting_card_count_three);
+        specificRoomBettingCardCountFour = (TextView) findViewById(R.id.specific_room_betting_card_count_four);
+        specificRoomBettingCardCountFive = (TextView) findViewById(R.id.specific_room_betting_card_count_five);
+
         specificRoomWithdraw = (ImageView) findViewById(R.id.specific_room_withdraw);
+
         specificRoomMgvHistory = (GridView) findViewById(R.id.specific_room_mgv_history);
+
         specificRoomTitleWechat = (TextView) findViewById(R.id.specific_room_title_wechat);
+
+        specificRoomIvMute = (ImageView) findViewById(R.id.specific_room_iv_mute);
+
+        specificRoomLiveTimeTv = (TextView) findViewById(R.id.specific_room_live_time_tv);
     }
 
     private void init() {
         specificRoomTvBalance.setText(user.getBalance() + "");
-        specificRoomTotalBettingOne.setText(allBet.getSpades() + "");
-        specificRoomTotalBettingTwo.setText(allBet.getHearts() + "");
-        specificRoomTotalBettingThree.setText(allBet.getClubs() + "");
-        specificRoomTotalBettingFour.setText(allBet.getDiamonds() + "");
-        specificRoomTotalBettingFive.setText(allBet.getJokers() + "");
+
+        specificRoomBettingCardTvOne.setText(userBet.getBig() + "");
+        specificRoomBettingCardTvTwo.setText(userBet.getSmall() + "");
+        specificRoomBettingCardTvThree.setText(userBet.getPeace() + "");
+        specificRoomBettingCardTvFour.setText(userBet.getSingle() + "");
+        specificRoomBettingCardTvFive.setText(userBet.getPair() + "");
+
+        specificRoomTotalBettingOne.setText(allBet.getBig() + "");
+        specificRoomTotalBettingTwo.setText(allBet.getSmall() + "");
+        specificRoomTotalBettingThree.setText(allBet.getPeace() + "");
+        specificRoomTotalBettingFour.setText(allBet.getSingle() + "");
+        specificRoomTotalBettingFive.setText(allBet.getPair() + "");
+
         specificRoomTitle1.setText("第" + game.getIssue() + "期 " + "第" + game.getGame_number() + "局");
         specificRoomTitleStatus.setText(game.getStatus_content());
         //判断是否发牌即播放发牌音乐
@@ -277,7 +362,9 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                 mOpen = true;
                 dealCards = false;
                 balance = user.getBalance();
+                flicker = false;
             }
+
         }
         specificRoomtitleCountdown.setText(" 剩余 " + game.getCountdown() + " 秒");
         //投注倒计时3秒即播放音乐
@@ -292,6 +379,9 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
             myOpen = false;
         } else {
             specificRoomOpen.setImageResource(this.getResources().getIdentifier(game.getOpen(), "drawable", "com.poker.colapanda.zhenrendantiao"));
+            if (!flicker) {
+                getFlicker();
+            }
         }
         //中没中奖
         if (mCard) {
@@ -304,8 +394,14 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                     myOpen = true;
                 }
                 mCard = false;
+
             }
+
+        } else {
+
         }
+
+
         setAdapter();
         //语音是否连接
 //        if (!mVudio) {
@@ -314,9 +410,66 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 //            mRtcEngine.muteLocalAudioStream(true);
 //            mVudio = true;
 //        }
+
+        specificRoomBettingCardCountOne.setText(history.getCount().getBig() + "次");
+        specificRoomBettingCardCountTwo.setText(history.getCount().getSmall() + "次");
+        specificRoomBettingCardCountThree.setText(history.getCount().getPeace() + "次");
+        specificRoomBettingCardCountFour.setText(history.getCount().getSingle() + "次");
+        specificRoomBettingCardCountFive.setText(history.getCount().getPair() + "次");
+
         specificRoomTitleWechat.setText(game.getWechat());
+        specificRoomLiveTimeTv.setText(game.getLive_time());
+
     }
 
+    /**
+     * 判断押注牌那张牌闪烁
+     */
+    private void getFlicker() {
+        flicker = true;
+        if (game.getOpen().equals("jokers_0") || game.getOpen().equals("jokers_1")) {
+            String spStr[] = game.getOpen().split("_");
+            if (spStr[1].equals("0")) {
+                myCount = new MyCount(8000, 1000, specificRoomBettingCardFour);
+                myCount.start();
+            } else {
+                myCount = new MyCount(8000, 1000, specificRoomBettingCardFive);
+                myCount.start();
+            }
+        } else {
+            String spStr[] = game.getOpen().split("_");
+            for (int i : bigs){
+                if (Integer.valueOf(spStr[1]) == i){
+                    myCount = new MyCount(8000, 1000, specificRoomBettingCardOne);
+                    myCount.start();
+                }
+            }
+            for (int i : smalls){
+                if (Integer.valueOf(spStr[1]) == i){
+                    myCount = new MyCount(8000, 1000, specificRoomBettingCardTwo);
+                    myCount.start();
+                }
+            }
+
+                if (Integer.valueOf(spStr[1]) == 7){
+                    myCount = new MyCount(8000, 1000, specificRoomBettingCardThree);
+                    myCount.start();
+                }
+
+            for (int i : singles){
+                if (Integer.valueOf(spStr[1]) == i){
+                    myCount = new MyCount(8000, 1000, specificRoomBettingCardFour);
+                    myCount.start();
+                }
+            }
+            for (int i : pairs){
+                if (Integer.valueOf(spStr[1]) == i){
+                    myCount = new MyCount(8000, 1000, specificRoomBettingCardFive);
+                    myCount.start();
+                }
+            }
+        }
+    }
 
     private void setAdapter() {
         String[] strings = new String[49];
@@ -369,6 +522,31 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                 clickMusic.start(this);
                 setLoginLog();
                 break;
+            case R.id.specific_room_betting_card_one:
+                getGameCommit(INTEGRATION, "big");
+                betMusic.start(this);
+                bet = true;
+                break;
+            case R.id.specific_room_betting_card_two:
+                getGameCommit(INTEGRATION, "small");
+                betMusic.start(this);
+                bet = true;
+                break;
+            case R.id.specific_room_betting_card_three:
+                getGameCommit(INTEGRATION, "peace");
+                betMusic.start(this);
+                bet = true;
+                break;
+            case R.id.specific_room_betting_card_four:
+                getGameCommit(INTEGRATION, "single");
+                betMusic.start(this);
+                bet = true;
+                break;
+            case R.id.specific_room_betting_card_five:
+                getGameCommit(INTEGRATION, "pair");
+                betMusic.start(this);
+                bet = true;
+                break;
             case R.id.specific_room_iv_chip:
                 setChip();
                 betMusic.start(this);
@@ -376,6 +554,20 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
             case R.id.specific_room_withdraw:
                 clickMusic.start(this);
                 setDiaLog();
+                break;
+            case R.id.specific_room_iv_mute:
+                if (!ZhenrendantiaoApplication.mute){
+                    specificRoomIvMute.setImageResource(R.drawable.open_mute);
+                    specificLivePlayer.setMute(false);
+                    ZhenrendantiaoApplication.mute = true;
+                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",false);
+                }else {
+                    specificRoomIvMute.setImageResource(R.drawable.off_mute);
+                    ZhenrendantiaoApplication.mute = false;
+                    specificLivePlayer.setMute(true);
+                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",true);
+
+                }
 
                 break;
         }
@@ -422,7 +614,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 //            @Override
 //            public void onClick(DialogInterface dialog, int which) {
 //                dialog.dismiss();
-//                withdrawMusic.start(ColorRoomActivity.this);
+//                withdrawMusic.start(specificRoomActivity.this);
 //                getWithdawData();
 //            }
 //        });
@@ -503,6 +695,10 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
             specificRoomIvChip.setImageResource(R.drawable.five_hundred);
             INTEGRATION = FIVE_HUNDRED;
         }
+//        if (number == 1) {
+//            roomIvChip.setImageResource(R.drawable.three_thousand);
+//            INTEGRATION = THREE_THOUSAND;
+//        }
         if (number == 1) {
             specificRoomIvChip.setImageResource(R.drawable.a_thousand);
             INTEGRATION = A_THOUSAND;
@@ -576,14 +772,16 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
             @Override
             public void onError(Call call, Exception e) {
 
-//                Toast.makeText(ColorRoomActivity.this, ResultError.MESSAGE_NULL, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(specificRoomActivity.this, ResultError.MESSAGE_NULL, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResponse(Result<Datas> response) {
                 if (response != null) {
+
                     if (!response.getSuccess()) {
                         Toast.makeText(SpecificPointRoomActivity.this, response.getMessage(), Toast.LENGTH_SHORT).show();
+
                     } else {
                         if (response.getData() != null) {
                             game = response.getData().getGame();
@@ -593,7 +791,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                             history = response.getData().getHistory();
                             if (!mLive) {
                                 String flvUrl = game.getLive_url();
-                                specificRLivePlayer.startPlay(flvUrl, TXLivePlayer.PLAY_TYPE_VOD_FLV);
+                                specificLivePlayer.startPlay(flvUrl, TXLivePlayer.PLAY_TYPE_VOD_FLV);
                                 mLive = true;
                             }
                             init();
@@ -603,6 +801,11 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                         }
                     }
                 }
+            }
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
             }
         });
     }
@@ -658,10 +861,10 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        specificRLivePlayer.stopPlay(true); // true代表清除最后一帧画面
-        specificRPlayerView.onDestroy();
+    protected void onPause() {
+        super.onPause();
+        specificLivePlayer.stopPlay(true); // true代表清除最后一帧画面
+        specificPlayerView.onDestroy();
         mLive = false;
         handler.removeCallbacks(runnable);
 //        mRtcEngine.leaveChannel();
@@ -677,6 +880,9 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         if (countdown) {
             countdownMusic.stop();
         }
+        if (bet) {
+            betMusic.stop();
+        }
         if (myOpen && balance == user.getBalance()) {
             notWinningMusic.stop();
         }
@@ -688,10 +894,6 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        specificRLivePlayer.stopPlay(true); // true代表清除最后一帧画面
-        specificRPlayerView.onDestroy();
-        handler.removeCallbacks(runnable);
-//        mRtcEngine.leaveChannel();
         CommonUtils.removeActivity(this);
     }
 
@@ -719,33 +921,4 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
         return super.onKeyUp(keyCode, event);
     }
-
-//    /**
-//     * 调节多媒体音量
-//     * @param keyCode
-//     * @param event
-//     * @return
-//     */
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//                audio.adjustStreamVolume(
-//                        AudioManager.STREAM_MUSIC,
-//                        AudioManager.ADJUST_RAISE,
-//                        AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
-//                return true;
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//                audio.adjustStreamVolume(
-//                        AudioManager.STREAM_MUSIC,
-//                        AudioManager.ADJUST_LOWER,
-//                        AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
-//                return true;
-//            default:
-//                break;
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
-
-
 }

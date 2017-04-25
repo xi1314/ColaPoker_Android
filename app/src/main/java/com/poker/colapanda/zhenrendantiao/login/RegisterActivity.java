@@ -34,11 +34,12 @@ import okhttp3.Request;
 public class RegisterActivity extends BaseActivity implements View.OnClickListener{
     private EditText registerEtAccount;//手机号
     private EditText registerEtPassWord;//密码
+    private EditText registerEtAgency;//代理
     private EditText registerEtCode;//验证码
     private Button registerBtSendCode;//发送
     private Button registerBtOk;//确定
     private Button registerBtCancel;//取消
-    private String account,passWord,code;
+    private String account,passWord,code,agency;
     private ProgressDialog upDialog;
     private TimeCount time;
     private ClickMusic clickMusic = new ClickMusic();
@@ -71,6 +72,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         registerBtSendCode = (Button) findViewById(R.id.register_bt_send_code);
         registerBtOk = (Button) findViewById(R.id.register_bt_ok);
         registerBtCancel = (Button) findViewById(R.id.register_bt_cancel);
+        registerEtAgency = (EditText) findViewById(R.id.register_et_agency);
 
     }
 
@@ -87,7 +89,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 account = registerEtAccount.getText().toString().trim();
                 passWord = registerEtPassWord.getText().toString().trim();
                 code = registerEtCode.getText().toString().trim();
-
+                if (registerEtAgency.getText().toString().trim().equals(null)){
+                    agency = "";
+                }else {
+                    agency = registerEtAgency.getText().toString().trim();
+                }
                 verifications();
 
                 break;
@@ -130,6 +136,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         map.put("phone",account);
         map.put("password",passWord);
         map.put("captcha",code);
+        map.put("agent",agency);
         OkHttpUtils.post().params(map).url(Constants.Comm.HOST_REGISTER).build().execute(new StringCallback() {
             @Override
             public void onBefore(Request request) {
@@ -160,7 +167,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                             finish();
                         }else {
-                            Toast.makeText(RegisterActivity.this, "注册失败", Toast.LENGTH_SHORT).show();
+                            String message = object.getString("message");
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
                         }
 
                     } catch (JSONException e) {

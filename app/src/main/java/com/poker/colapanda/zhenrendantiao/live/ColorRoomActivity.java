@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.poker.colapanda.zhenrendantiao.R;
 import com.poker.colapanda.zhenrendantiao.common.Constants;
 import com.poker.colapanda.zhenrendantiao.common.MyCount;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 import com.poker.colapanda.zhenrendantiao.common.music.BetMusic;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.common.music.CountdownMusic;
@@ -45,6 +46,7 @@ import com.poker.colapanda.zhenrendantiao.live.model.UserBet;
 import com.poker.colapanda.zhenrendantiao.login.LoginActivity;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.poker.colapanda.zhenrendantiao.utils.ExitUtils;
+import com.poker.colapanda.zhenrendantiao.utils.SPUtils;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayer;
@@ -109,10 +111,12 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     private RelativeLayout colorRoomLiveNotBackground;//未开播背景
     private ImageView colorRoomOpen;//开牌
     private ImageView colorRoomIvVoice;//语音
+    private ImageView colorRoomIvMute;//静音
     private ImageView colorRoomIvChip;//筹码
     private ImageView colorRoomWithdraw;//撤销
     private GridView colorRoomMgvHistory;//小历史
     private TextView colorRoomTitleWechat;
+    private TextView colorRoomLiveTimeTv;//开播时间
 
     private Button colorRoomBtCharge;//充值
     private Button colorRoomBtMention;//提现
@@ -192,6 +196,11 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         CommonUtils.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//屏幕常亮
         initView();
+        if (!(boolean)SPUtils.get(ZhenrendantiaoApplication.appContext,"mute",false)){
+            colorRoomIvMute.setImageResource(R.drawable.open_mute);
+        }else {
+            colorRoomIvMute.setImageResource(R.drawable.off_mute);
+        }
         token = getIntent().getStringExtra("token");
         getGameData();
         colorLivePlayer = new TXLivePlayer(this);
@@ -214,6 +223,11 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
                 }
                 if (i == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
                     colorRoomLiveNotBackground.setVisibility(View.GONE);
+                    if (ZhenrendantiaoApplication.mute) {
+                        colorLivePlayer.setMute(false);
+                    }else {
+                        colorLivePlayer.setMute(true);
+                    }
                 }
 
             }
@@ -248,6 +262,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         });
         colorRoomIvChip.setOnClickListener(this);
         colorRoomWithdraw.setOnClickListener(this);
+        colorRoomIvMute.setOnClickListener(this);
 
     }
 
@@ -304,6 +319,8 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         colorRoomMgvHistory = (GridView) findViewById(R.id.color_room_mgv_history);
 
         colorRoomTitleWechat = (TextView) findViewById(R.id.color_room_title_wechat);
+        colorRoomIvMute = (ImageView) findViewById(R.id.color_room_iv_mute);
+        colorRoomLiveTimeTv = (TextView) findViewById(R.id.color_room_live_time_tv);
     }
 
     private void init() {
@@ -393,6 +410,9 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         colorRoomBettingCardCountFive.setText(history.getCount().getJokers() + "次");
 
         colorRoomTitleWechat.setText(game.getWechat());
+
+        colorRoomLiveTimeTv.setText(game.getLive_time());
+
 
     }
 
@@ -509,6 +529,21 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
             case R.id.color_room_withdraw:
                 clickMusic.start(this);
                 setDiaLog();
+                break;
+            case R.id.color_room_iv_mute:
+                if (!ZhenrendantiaoApplication.mute){
+                    colorRoomIvMute.setImageResource(R.drawable.open_mute);
+                    colorLivePlayer.setMute(false);
+                    ZhenrendantiaoApplication.mute = true;
+                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",false);
+                }else {
+                    colorRoomIvMute.setImageResource(R.drawable.off_mute);
+                    ZhenrendantiaoApplication.mute = false;
+                    colorLivePlayer.setMute(true);
+                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",true);
+
+                }
+
                 break;
         }
     }
@@ -801,8 +836,8 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         colorLivePlayer.stopPlay(true); // true代表清除最后一帧画面
         colorPlayerView.onDestroy();
         mLive = false;
@@ -820,9 +855,9 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         if (countdown) {
             countdownMusic.stop();
         }
-//        if (bet) {
-//            betMusic.stop();
-//        }
+        if (bet) {
+            betMusic.stop();
+        }
         if (myOpen && balance == user.getBalance()) {
             notWinningMusic.stop();
         }
@@ -834,33 +869,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        colorLivePlayer.stopPlay(true); // true代表清除最后一帧画面
-        colorPlayerView.onDestroy();
-        handler.removeCallbacks(runnable);
-//        mRtcEngine.leaveChannel();
         CommonUtils.removeActivity(this);
-//        if (dealCards) {
-//            dealCardsMusic.stop();
-//        }
-//        if (mOpen) {
-//            openMusic.stop();
-//        }
-//        if (mclick) {
-//            clickMusic.stop();
-//        }
-//        if (countdown) {
-//            countdownMusic.stop();
-//        }
-//        if (bet) {
-//            betMusic.stop();
-//        }
-//        if (myOpen && balance == user.getBalance()) {
-//            notWinningMusic.stop();
-//        }
-//        if (myOpen && balance != user.getBalance()) {
-//            winningMusic.stop();
-//        }
-
     }
 
     /**
