@@ -11,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -82,16 +84,16 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
 
     private String token;
-    private TextView specificRoomTotalBettingOne;//总倍数
-    private TextView specificRoomTotalBettingTwo;//总倍数
-    private TextView specificRoomTotalBettingThree;//总倍数
-    private TextView specificRoomTotalBettingFour;//总倍数
-    private TextView specificRoomTotalBettingFive;//总倍数
-    private TextView specificRoomBettingCardTvOne;//压倍数
-    private TextView specificRoomBettingCardTvTwo;//压倍数
-    private TextView specificRoomBettingCardTvThree;//压倍数
-    private TextView specificRoomBettingCardTvFour;//压倍数
-    private TextView specificRoomBettingCardTvFive;//压倍数
+    private TextView specificRoomTotalBettingOne;//大总倍数
+    private TextView specificRoomTotalBettingTwo;//小总倍数
+    private TextView specificRoomTotalBettingThree;//和总倍数
+    private TextView specificRoomTotalBettingFour;//单总倍数
+    private TextView specificRoomTotalBettingFive;//双总倍数
+    private TextView specificRoomBettingCardTvOne;//大压倍数
+    private TextView specificRoomBettingCardTvTwo;//小压倍数
+    private TextView specificRoomBettingCardTvThree;//和压倍数
+    private TextView specificRoomBettingCardTvFour;//单压倍数
+    private TextView specificRoomBettingCardTvFive;//双压倍数
     private TextView specificRoomTvBalance;//余额
     private TextView specificRoomTitle1;
     private TextView specificRoomTitleStatus;
@@ -116,6 +118,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private GridView specificRoomMgvHistory;//小历史
     private TextView specificRoomTitleWechat;
     private TextView specificRoomLiveTimeTv;//开播时间
+    private TextView specificRoomBonusTv;//赢多少
 
     private Button specificRoomBtCharge;//充值
     private Button specificRoomBtMention;//提现
@@ -132,6 +135,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private boolean countdown;
     private boolean bet;
     private boolean flicker;//闪烁不闪烁
+    private boolean animations;//赢多少是否显示过一次
 
 
     private HistoryAdapter historyAdapter;
@@ -141,6 +145,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private UserBet userBet = new UserBet();
     private AllBet allBet = new AllBet();
     private History history = new History();
+    private Datas datas = new Datas();
 
     private int FIVE = 5;
     private int TWENTY = 20;
@@ -192,6 +197,8 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
     private int[] smalls = {1, 2, 3, 4, 5, 6};
     private int[] singles = {1, 3, 5, 7, 9, 11, 13};
     private int[] pairs = {2, 4, 6, 8, 10, 12};
+    private Animation animation;
+    private String bonus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,10 +207,10 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         CommonUtils.addActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//屏幕常亮
         initView();
-            if (!(boolean)SPUtils.get(ZhenrendantiaoApplication.appContext,"mute",false)){
-                specificRoomIvMute.setImageResource(R.drawable.open_mute);
-            }else {
-                specificRoomIvMute.setImageResource(R.drawable.off_mute);
+        if (!(boolean) SPUtils.get(ZhenrendantiaoApplication.appContext, "mute", false)) {
+            specificRoomIvMute.setImageResource(R.drawable.open_mute);
+        } else {
+            specificRoomIvMute.setImageResource(R.drawable.off_mute);
         }
         token = getIntent().getStringExtra("token");
         getGameData();
@@ -229,7 +236,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                     specificRoomLiveNotBackground.setVisibility(View.GONE);
                     if (ZhenrendantiaoApplication.mute) {
                         specificLivePlayer.setMute(false);
-                    }else {
+                    } else {
                         specificLivePlayer.setMute(true);
                     }
                 }
@@ -241,7 +248,6 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
             }
         });
-
     }
 
     private void setOnClickListener() {
@@ -328,6 +334,9 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         specificRoomIvMute = (ImageView) findViewById(R.id.specific_room_iv_mute);
 
         specificRoomLiveTimeTv = (TextView) findViewById(R.id.specific_room_live_time_tv);
+
+        specificRoomBonusTv = (TextView) findViewById(R.id.specific_room_bonus);
+        animation = AnimationUtils.loadAnimation(this, R.anim.gradually);
     }
 
     private void init() {
@@ -419,6 +428,17 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         specificRoomTitleWechat.setText(game.getWechat());
         specificRoomLiveTimeTv.setText(game.getLive_time());
 
+        if (!bonus.equals("")) {
+            if (!animations) {
+                specificRoomBonusTv.setText(bonus);
+                animation.setFillAfter(true);
+                specificRoomBonusTv.startAnimation(animation);
+                animations = true;
+            }
+        } else {
+            specificRoomBonusTv.setText(bonus);
+            animations = false;
+        }
     }
 
     /**
@@ -437,32 +457,32 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
             }
         } else {
             String spStr[] = game.getOpen().split("_");
-            for (int i : bigs){
-                if (Integer.valueOf(spStr[1]) == i){
+            for (int i : bigs) {
+                if (Integer.valueOf(spStr[1]) == i) {
                     myCount = new MyCount(8000, 1000, specificRoomBettingCardOne);
                     myCount.start();
                 }
             }
-            for (int i : smalls){
-                if (Integer.valueOf(spStr[1]) == i){
+            for (int i : smalls) {
+                if (Integer.valueOf(spStr[1]) == i) {
                     myCount = new MyCount(8000, 1000, specificRoomBettingCardTwo);
                     myCount.start();
                 }
             }
 
-                if (Integer.valueOf(spStr[1]) == 7){
-                    myCount = new MyCount(8000, 1000, specificRoomBettingCardThree);
-                    myCount.start();
-                }
+            if (Integer.valueOf(spStr[1]) == 7) {
+                myCount = new MyCount(8000, 1000, specificRoomBettingCardThree);
+                myCount.start();
+            }
 
-            for (int i : singles){
-                if (Integer.valueOf(spStr[1]) == i){
+            for (int i : singles) {
+                if (Integer.valueOf(spStr[1]) == i) {
                     myCount = new MyCount(8000, 1000, specificRoomBettingCardFour);
                     myCount.start();
                 }
             }
-            for (int i : pairs){
-                if (Integer.valueOf(spStr[1]) == i){
+            for (int i : pairs) {
+                if (Integer.valueOf(spStr[1]) == i) {
                     myCount = new MyCount(8000, 1000, specificRoomBettingCardFive);
                     myCount.start();
                 }
@@ -555,16 +575,16 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
                 setDiaLog();
                 break;
             case R.id.specific_room_iv_mute:
-                if (!ZhenrendantiaoApplication.mute){
+                if (!ZhenrendantiaoApplication.mute) {
                     specificRoomIvMute.setImageResource(R.drawable.open_mute);
                     specificLivePlayer.setMute(false);
                     ZhenrendantiaoApplication.mute = true;
-                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",false);
-                }else {
+                    SPUtils.put(ZhenrendantiaoApplication.appContext, "mute", false);
+                } else {
                     specificRoomIvMute.setImageResource(R.drawable.off_mute);
                     ZhenrendantiaoApplication.mute = false;
                     specificLivePlayer.setMute(true);
-                    SPUtils.put(ZhenrendantiaoApplication.appContext,"mute",true);
+                    SPUtils.put(ZhenrendantiaoApplication.appContext, "mute", true);
 
                 }
 
@@ -783,11 +803,12 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
                     } else {
                         if (response.getData() != null) {
-                            game = response.getData().getGame();
-                            user = response.getData().getUser();
-                            userBet = response.getData().getUser_bet();
-                            allBet = response.getData().getAll_bet();
-                            history = response.getData().getHistory();
+                            datas = response.getData();
+                            game = datas.getGame();
+                            user = datas.getUser();
+                            userBet = datas.getUser_bet();
+                            allBet = datas.getAll_bet();
+                            history = datas.getHistory();
                             if (!mLive) {
                                 String flvUrl = game.getLive_url();
                                 specificLivePlayer.startPlay(flvUrl, TXLivePlayer.PLAY_TYPE_VOD_FLV);
@@ -815,6 +836,20 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         @Override
         public Result<Datas> parseNetworkResponse(Response response) throws Exception {
             String string = response.body().string();
+
+
+            //***************************************
+            //针对现在 自动解析没用
+            JSONObject obj = new JSONObject(string);
+            JSONObject object = obj.getJSONObject("data");
+            if (object.isNull("user_bonus")) {
+                bonus = "";
+            } else {
+                bonus = object.getString("user_bonus");
+            }
+            //*************************************************************
+
+
             Result<Datas> build = null;
             try {
                 build = new Gson().fromJson(string,

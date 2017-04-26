@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.poker.colapanda.zhenrendantiao.R;
 import com.poker.colapanda.zhenrendantiao.common.Constants;
-import com.poker.colapanda.zhenrendantiao.common.InnerRecevier;
 import com.poker.colapanda.zhenrendantiao.common.OFFReceiver;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.common.music.MusicServer;
@@ -56,6 +55,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private ClickMusic clickMusic = new ClickMusic();
     public long backtime = 0;
     private String updateUrl;
+    private boolean intents;//是不是跳转玩法页面
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +67,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         initView();
         setClickListener();
         EventBus.getDefault().register(this);
-        //广播 home键
-        registerReceiver(new InnerRecevier(), new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+//        //广播 home键
+//        registerReceiver(new InnerRecevier(), new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         //广播 屏幕是否黑屏
         registerReceiver(new OFFReceiver(), new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
@@ -123,6 +123,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.login_iv_register:
                 clickMusic.start(this);
                 CommonUtils.jump(this, RegisterActivity.class);
+                intents = true;
                 break;
             case R.id.login_surrogate:
                 intent.setAction("android.intent.action.VIEW");
@@ -193,6 +194,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         if (success.equals("true")) {
                             String token = object.getString("api_token");
                             CommonUtils.jumps(LoginActivity.this, PlaySelectionActivity.class, token);
+                            intents = true;
 //                            finish();
 //                            Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                             //保存账号密码
@@ -234,16 +236,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     protected void onResume() {
         super.onResume();
+        intents = false;
         if (!open) {
             startService(Serviceintent);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!intents){
+            stopService(Serviceintent);
+            open = false;
+        }
+
     }
 
     protected void onDestroy() {
         super.onDestroy();
         clickMusic.stop();
         EventBus.getDefault().unregister(this);
-        stopService(Serviceintent);
+//        stopService(Serviceintent);
         CommonUtils.removeActivity(this);
     }
 

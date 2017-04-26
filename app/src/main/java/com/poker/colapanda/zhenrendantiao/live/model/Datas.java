@@ -9,6 +9,15 @@ public class Datas {
     private UserBet user_bet;
     private History history;
     private User user;
+    private String user_bonus;
+
+    public String getUser_bonus() {
+        return user_bonus;
+    }
+
+    public void setUser_bonus(String user_bonus) {
+        this.user_bonus = user_bonus;
+    }
 
     public Game getGame() {
         return game;

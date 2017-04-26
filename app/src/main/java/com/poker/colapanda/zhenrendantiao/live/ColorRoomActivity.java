@@ -11,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -116,6 +118,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     private GridView colorRoomMgvHistory;//小历史
     private TextView colorRoomTitleWechat;
     private TextView colorRoomLiveTimeTv;//开播时间
+    private TextView colorRoomBonusTv;//赢多少
 
     private Button colorRoomBtCharge;//充值
     private Button colorRoomBtMention;//提现
@@ -132,6 +135,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     private boolean countdown;
     private boolean bet;
     private boolean flicker;//闪烁不闪烁
+    private boolean animations;//赢多少是否显示过一次
 
 
     private HistoryAdapter historyAdapter;
@@ -187,6 +191,9 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
 //        }
 //    };
     private MyCount myCount;
+
+    private Animation animation;
+    private String bonus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,6 +327,9 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         colorRoomTitleWechat = (TextView) findViewById(R.id.color_room_title_wechat);
         colorRoomIvMute = (ImageView) findViewById(R.id.color_room_iv_mute);
         colorRoomLiveTimeTv = (TextView) findViewById(R.id.color_room_live_time_tv);
+
+        colorRoomBonusTv = (TextView) findViewById(R.id.color_room_bonus);
+        animation = AnimationUtils.loadAnimation(this, R.anim.gradually);
     }
 
     private void init() {
@@ -411,6 +421,18 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         colorRoomTitleWechat.setText(game.getWechat());
 
         colorRoomLiveTimeTv.setText(game.getLive_time());
+
+        if (!bonus.equals("")) {
+            if (!animations) {
+                colorRoomBonusTv.setText(bonus);
+                animation.setFillAfter(true);
+                colorRoomBonusTv.startAnimation(animation);
+                animations = true;
+            }
+        } else {
+            colorRoomBonusTv.setText(bonus);
+            animations = false;
+        }
 
 
     }
@@ -790,6 +812,18 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
         @Override
         public Result<Datas> parseNetworkResponse(Response response) throws Exception {
             String string = response.body().string();
+
+            //***************************************
+            //针对现在 自动解析没用
+            JSONObject obj = new JSONObject(string);
+            JSONObject object = obj.getJSONObject("data");
+            if (object.isNull("user_bonus")) {
+                bonus = "";
+            } else {
+                bonus = object.getString("user_bonus");
+            }
+            //*************************************************************
+
             Result<Datas> build = null;
             try {
                 build = new Gson().fromJson(string,
