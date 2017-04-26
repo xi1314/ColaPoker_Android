@@ -71,7 +71,7 @@ import okhttp3.Response;
  */
 public class SpecificPointRoomActivity extends BaseActivity implements View.OnClickListener {
     private TXCloudVideoView specificPlayerView;//播放窗口
-    private TXLivePlayer specificLivePlayer;//播放窗口
+    public static TXLivePlayer specificLivePlayer;//播放窗口
     private long backtime = 0;
     private ClickMusic clickMusic = new ClickMusic();
     private OpenMusic openMusic = new OpenMusic();
@@ -430,7 +430,7 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
         if (!bonus.equals("")) {
             if (!animations) {
-                specificRoomBonusTv.setText(bonus);
+                specificRoomBonusTv.setText("盈利：" + bonus);
                 animation.setFillAfter(true);
                 specificRoomBonusTv.startAnimation(animation);
                 animations = true;

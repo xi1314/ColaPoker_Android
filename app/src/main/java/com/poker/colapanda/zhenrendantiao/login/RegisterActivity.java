@@ -11,12 +11,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.poker.colapanda.zhenrendantiao.R;
-import com.poker.colapanda.zhenrendantiao.common.widget.BaseActivity;
-import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.common.Constants;
-import com.poker.colapanda.zhenrendantiao.common.InnerRecevier;
 import com.poker.colapanda.zhenrendantiao.common.OFFReceiver;
+import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.common.network.ResultError;
+import com.poker.colapanda.zhenrendantiao.common.widget.BaseActivity;
 import com.poker.colapanda.zhenrendantiao.login.model.Open;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -43,6 +42,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private ProgressDialog upDialog;
     private TimeCount time;
     private ClickMusic clickMusic = new ClickMusic();
+    private boolean ssss;
 
 
 
@@ -54,7 +54,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         initView();
         setClickListener();
         //广播 home键
-        registerReceiver(new InnerRecevier(), new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+//        registerReceiver(new InnerRecevier(), new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         //广播 屏幕是否黑屏
         registerReceiver(new OFFReceiver(), new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
@@ -99,6 +99,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.register_bt_cancel:
                 clickMusic.start(this);
+                ssss = true;
                 finish();
                 break;
         }
@@ -165,6 +166,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                         String success = object.getString("success");
                         if (success.equals("true")){
                             Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                            ssss = true;
                             finish();
                         }else {
                             String message = object.getString("message");
@@ -237,6 +239,14 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         super.onResume();
         if (!LoginActivity.open) {
             EventBus.getDefault().post(new Open());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!ssss){
+            stopService(LoginActivity.Serviceintent);
         }
     }
 

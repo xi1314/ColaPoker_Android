@@ -11,7 +11,6 @@ import com.poker.colapanda.zhenrendantiao.R;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.live.ColorRoomActivity;
 import com.poker.colapanda.zhenrendantiao.live.SpecificPointRoomActivity;
-import com.poker.colapanda.zhenrendantiao.login.model.Home;
 import com.poker.colapanda.zhenrendantiao.login.model.Open;
 import com.poker.colapanda.zhenrendantiao.utils.CommonUtils;
 import com.poker.colapanda.zhenrendantiao.utils.ExitUtils;
@@ -25,6 +24,7 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
     public static String token;
     private long backtime = 0;
     private ClickMusic clickMusic = new ClickMusic();
+    private boolean sssss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +54,14 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
         clickMusic.start(this);
         switch (view.getId()){
             case R.id.play_selection_retreat:
+                sssss = true;
                 finish();
                 break;
             case R.id.play_selection_color:
                 CommonUtils.jumps(PlaySelectionActivity.this, ColorRoomActivity.class, token);
-                EventBus.getDefault().post(new Home());
                 break;
             case R.id.play_selection_specific:
                 CommonUtils.jumps(PlaySelectionActivity.this, SpecificPointRoomActivity.class, token);
-                EventBus.getDefault().post(new Home());
                 break;
         }
     }
@@ -73,6 +72,15 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
             EventBus.getDefault().post(new Open());
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!sssss){
+            stopService(LoginActivity.Serviceintent);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

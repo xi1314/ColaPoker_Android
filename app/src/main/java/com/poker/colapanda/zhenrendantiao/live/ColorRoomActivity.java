@@ -71,7 +71,7 @@ import okhttp3.Response;
  */
 public class ColorRoomActivity extends BaseActivity implements View.OnClickListener {
     private TXCloudVideoView colorPlayerView;//播放窗口
-    private TXLivePlayer colorLivePlayer;//播放窗口
+    public static TXLivePlayer colorLivePlayer;//播放窗口
     private long backtime = 0;
     private ClickMusic clickMusic = new ClickMusic();
     private OpenMusic openMusic = new OpenMusic();
@@ -424,7 +424,7 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
 
         if (!bonus.equals("")) {
             if (!animations) {
-                colorRoomBonusTv.setText(bonus);
+                colorRoomBonusTv.setText("盈利：" + bonus);
                 animation.setFillAfter(true);
                 colorRoomBonusTv.startAnimation(animation);
                 animations = true;

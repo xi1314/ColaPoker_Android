@@ -50,7 +50,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private String account, passWord;
     private ProgressDialog upDialog;
-    private Intent Serviceintent;
+    public static Intent Serviceintent;
     public static boolean open = true;
     private ClickMusic clickMusic = new ClickMusic();
     public long backtime = 0;

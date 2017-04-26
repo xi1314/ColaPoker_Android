@@ -47,6 +47,12 @@
         <activity
             android:name=".login.PlaySelectionActivity"
             android:screenOrientation="landscape" />
+        <receiver android:name=".common.PhoneStateBroadCastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
