@@ -31,10 +31,10 @@ public class PhoneStateBroadCastReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_RINGING://铃声
                     ZhenrendantiaoApplication.mute = false;
                     EventBus.getDefault().post(new Home());
-                    if (SpecificPointRoomActivity.specificLivePlayer!=null){
+                    if (SpecificPointRoomActivity.specificLivePlayer != null) {
                         SpecificPointRoomActivity.specificLivePlayer.setMute(true);
                     }
-                    if (ColorRoomActivity.colorLivePlayer!=null){
+                    if (ColorRoomActivity.colorLivePlayer != null) {
                         ColorRoomActivity.colorLivePlayer.setMute(true);
                     }
 
@@ -44,13 +44,15 @@ public class PhoneStateBroadCastReceiver extends BroadcastReceiver {
                     break;
                 case TelephonyManager.CALL_STATE_IDLE://挂
                     ZhenrendantiaoApplication.mute = true;
-                    if (SpecificPointRoomActivity.specificLivePlayer!=null){
+                    if (SpecificPointRoomActivity.specificLivePlayer != null) {
                         SpecificPointRoomActivity.specificLivePlayer.setMute(false);
                     }
-                    if (ColorRoomActivity.colorLivePlayer!=null){
+                    if (ColorRoomActivity.colorLivePlayer != null) {
                         ColorRoomActivity.colorLivePlayer.setMute(false);
                     }
-                    EventBus.getDefault().post(new Open());
+                    if (ZhenrendantiaoApplication.ssssss) {
+                        EventBus.getDefault().post(new Open());
+                    }
                     break;
             }
         }

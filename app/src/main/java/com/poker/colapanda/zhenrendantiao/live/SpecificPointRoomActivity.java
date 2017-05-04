@@ -430,13 +430,12 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
 
         if (!bonus.equals("")) {
             if (!animations) {
-                specificRoomBonusTv.setText("盈利：" + bonus);
+                specificRoomBonusTv.setText("赢分 +" + bonus);
                 animation.setFillAfter(true);
                 specificRoomBonusTv.startAnimation(animation);
                 animations = true;
             }
         } else {
-            specificRoomBonusTv.setText(bonus);
             animations = false;
         }
     }
@@ -894,29 +893,32 @@ public class SpecificPointRoomActivity extends BaseActivity implements View.OnCl
         handler.postDelayed(runnable, DELYED);
     }
 
+
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        specificLivePlayer.pause();
         specificLivePlayer.stopPlay(true); // true代表清除最后一帧画面
         specificPlayerView.onDestroy();
+        ZhenrendantiaoApplication.ssssss = false;
         mLive = false;
         handler.removeCallbacks(runnable);
 //        mRtcEngine.leaveChannel();
         if (dealCards) {
             dealCardsMusic.stop();
         }
-        if (mOpen) {
-            openMusic.stop();
-        }
+//        if (mOpen) {
+//            openMusic.stop();
+//        }
         if (mclick) {
             clickMusic.stop();
         }
-        if (countdown) {
-            countdownMusic.stop();
-        }
-        if (bet) {
-            betMusic.stop();
-        }
+//        if (countdown) {
+//            countdownMusic.stop();
+//        }
+//        if (bet) {
+//            betMusic.stop();
+//        }
         if (myOpen && balance == user.getBalance()) {
             notWinningMusic.stop();
         }

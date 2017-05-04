@@ -424,13 +424,12 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
 
         if (!bonus.equals("")) {
             if (!animations) {
-                colorRoomBonusTv.setText("盈利：" + bonus);
+                colorRoomBonusTv.setText("赢分 +" + bonus);
                 animation.setFillAfter(true);
                 colorRoomBonusTv.startAnimation(animation);
                 animations = true;
             }
         } else {
-            colorRoomBonusTv.setText(bonus);
             animations = false;
         }
 
@@ -869,28 +868,30 @@ public class ColorRoomActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        colorLivePlayer.pause();
         colorLivePlayer.stopPlay(true); // true代表清除最后一帧画面
         colorPlayerView.onDestroy();
         mLive = false;
+        ZhenrendantiaoApplication.ssssss = false;
         handler.removeCallbacks(runnable);
 //        mRtcEngine.leaveChannel();
         if (dealCards) {
             dealCardsMusic.stop();
         }
-        if (mOpen) {
-            openMusic.stop();
-        }
+//        if (mOpen) {
+//            openMusic.stop();
+//        }
         if (mclick) {
             clickMusic.stop();
         }
-        if (countdown) {
-            countdownMusic.stop();
-        }
-        if (bet) {
-            betMusic.stop();
-        }
+//        if (countdown) {
+//            countdownMusic.stop();
+//        }
+//        if (bet) {
+//            betMusic.stop();
+//        }
         if (myOpen && balance == user.getBalance()) {
             notWinningMusic.stop();
         }

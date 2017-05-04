@@ -57,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private String updateUrl;
     private boolean intents;//是不是跳转玩法页面
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,6 +250,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             stopService(Serviceintent);
             open = false;
         }
+
 
     }
 

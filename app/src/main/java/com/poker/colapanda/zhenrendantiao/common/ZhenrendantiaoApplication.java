@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class ZhenrendantiaoApplication extends LitePalApplication {
     public static Context appContext;
     public static boolean mute = true ;
+    public static boolean ssssss = true ;
     //连接超时
     public final static int CONNECTTIMEOUT = 10;
     public final static int READTIMEOUT = 20;

@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.poker.colapanda.zhenrendantiao.R;
+import com.poker.colapanda.zhenrendantiao.common.ZhenrendantiaoApplication;
 import com.poker.colapanda.zhenrendantiao.common.music.ClickMusic;
 import com.poker.colapanda.zhenrendantiao.live.ColorRoomActivity;
 import com.poker.colapanda.zhenrendantiao.live.SpecificPointRoomActivity;
@@ -68,6 +69,7 @@ public class PlaySelectionActivity extends Activity implements View.OnClickListe
 
     protected void onResume() {
         super.onResume();
+        ZhenrendantiaoApplication.ssssss = true;
         if (!LoginActivity.open) {
             EventBus.getDefault().post(new Open());
         }
